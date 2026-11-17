@@ -1,0 +1,4 @@
+texto_n,score,n_palabras,tema_fraude,tema_fallas_app,tema_plata_no_llega,tema_acceso_bloqueo,tema_cobros,tema_atencion,menciona_dinero,menciona_espera,pct_mayusculas,n_exclamaciones
+Texto de ejemplo escrito para probar el modelo,1.0,23.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.05555555555555555,0.0
+Texto de ejemplo escrito para probar el modelo,1.0,6.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+Texto de ejemplo escrito para probar el modelo,2.0,63.0,0.0,1.0,1.0,1.0,0.0,1.0,1.0,1.0,0.2,0.0

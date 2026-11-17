@@ -1,0 +1,186 @@
+{
+  "evento": "reseña grave",
+  "clase_positiva": 1,
+  "umbrales": [
+    0.12
+  ],
+  "decisiones": [
+    "No escalar",
+    "Escalar"
+  ],
+  "metricas": {
+    "costo_modelo": 535.0,
+    "costo_regla": 480.0,
+    "regla_simple": "Escalar si la reseña habla de fraude, plata que no llega, acceso o bloqueo, o cobros, o si menciona dinero",
+    "unidad_costo": "por cada 1.000 reseñas negativas (5 por grave perdida, 1 por leve escalada)",
+    "intervalo_diferencia": [
+      -145.0,
+      30.0
+    ],
+    "Costo regla en billeteras": 481.0,
+    "Costo modelo en billeteras": 531.6,
+    "Usuarios supuestos de Brío (millones)": 5.0,
+    "Negativas por día (Brío)": 5.4,
+    "Escaladas por día (Brío)": 3.0,
+    "Graves por día (Brío)": 1.4,
+    "Analistas necesarios": 1
+  },
+  "columnas": [
+    {
+      "nombre": "texto_n",
+      "tipo": "texto",
+      "permite_faltantes": false
+    },
+    {
+      "nombre": "score",
+      "tipo": "numérica",
+      "permite_faltantes": false,
+      "minimo": 1.0,
+      "maximo": 3.0,
+      "referencia": 1.0,
+      "p10": 1.0,
+      "p90": 2.0
+    },
+    {
+      "nombre": "n_palabras",
+      "tipo": "numérica",
+      "permite_faltantes": false,
+      "minimo": 4.0,
+      "maximo": 100.0,
+      "referencia": 23.0,
+      "p10": 6.0,
+      "p90": 63.0
+    },
+    {
+      "nombre": "tema_fraude",
+      "tipo": "numérica",
+      "permite_faltantes": false,
+      "minimo": 0.0,
+      "maximo": 1.0,
+      "referencia": 0.0,
+      "p10": 0.0,
+      "p90": 0.0
+    },
+    {
+      "nombre": "tema_fallas_app",
+      "tipo": "numérica",
+      "permite_faltantes": false,
+      "minimo": 0.0,
+      "maximo": 1.0,
+      "referencia": 0.0,
+      "p10": 0.0,
+      "p90": 1.0
+    },
+    {
+      "nombre": "tema_plata_no_llega",
+      "tipo": "numérica",
+      "permite_faltantes": false,
+      "minimo": 0.0,
+      "maximo": 1.0,
+      "referencia": 0.0,
+      "p10": 0.0,
+      "p90": 1.0
+    },
+    {
+      "nombre": "tema_acceso_bloqueo",
+      "tipo": "numérica",
+      "permite_faltantes": false,
+      "minimo": 0.0,
+      "maximo": 1.0,
+      "referencia": 0.0,
+      "p10": 0.0,
+      "p90": 1.0
+    },
+    {
+      "nombre": "tema_cobros",
+      "tipo": "numérica",
+      "permite_faltantes": false,
+      "minimo": 0.0,
+      "maximo": 1.0,
+      "referencia": 0.0,
+      "p10": 0.0,
+      "p90": 0.0
+    },
+    {
+      "nombre": "tema_atencion",
+      "tipo": "numérica",
+      "permite_faltantes": false,
+      "minimo": 0.0,
+      "maximo": 1.0,
+      "referencia": 0.0,
+      "p10": 0.0,
+      "p90": 1.0
+    },
+    {
+      "nombre": "menciona_dinero",
+      "tipo": "numérica",
+      "permite_faltantes": false,
+      "minimo": 0.0,
+      "maximo": 1.0,
+      "referencia": 0.0,
+      "p10": 0.0,
+      "p90": 1.0
+    },
+    {
+      "nombre": "menciona_espera",
+      "tipo": "numérica",
+      "permite_faltantes": false,
+      "minimo": 0.0,
+      "maximo": 1.0,
+      "referencia": 0.0,
+      "p10": 0.0,
+      "p90": 1.0
+    },
+    {
+      "nombre": "pct_mayusculas",
+      "tipo": "numérica",
+      "permite_faltantes": false,
+      "minimo": 0.0,
+      "maximo": 5.0,
+      "referencia": 0.05555555555555555,
+      "p10": 0.0,
+      "p90": 0.2
+    },
+    {
+      "nombre": "n_exclamaciones",
+      "tipo": "numérica",
+      "permite_faltantes": false,
+      "minimo": 0.0,
+      "maximo": 6.0,
+      "referencia": 0.0,
+      "p10": 0.0,
+      "p90": 0.0
+    }
+  ],
+  "etiquetas": {
+    "texto_n": "Texto de la reseña",
+    "score": "Estrellas",
+    "n_palabras": "Número de palabras",
+    "tema_fraude": "Habla de fraude",
+    "tema_fallas_app": "Habla de fallas de la app",
+    "tema_plata_no_llega": "Habla de plata que no llega",
+    "tema_acceso_bloqueo": "Habla de acceso o bloqueo",
+    "tema_cobros": "Habla de cobros",
+    "tema_atencion": "Habla de atención",
+    "menciona_dinero": "Menciona dinero",
+    "menciona_espera": "Dice cuánto lleva esperando",
+    "pct_mayusculas": "Mayúsculas por palabra",
+    "n_exclamaciones": "Signos de exclamación",
+    "caso": "Caso",
+    "app": "App",
+    "text": "Reseña",
+    "regla": "Decisión de la regla",
+    "equipo_sugerido": "Equipo sugerido",
+    "prioridad": "Prioridad"
+  },
+  "columna_id": "caso",
+  "n_entrenamiento": 250,
+  "versiones": {
+    "scikit-learn": "1.6.1",
+    "pandas": "2.2.3",
+    "numpy": "2.4.6",
+    "joblib": "1.6.0"
+  },
+  "python": "3.13",
+  "fecha_exportacion": "2026-11-17T20:37:28"
+}

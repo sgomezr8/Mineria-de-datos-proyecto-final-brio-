@@ -1,0 +1,153 @@
+<!doctype html>
+<!-- ZONA LIBRE (opción HTML): pueden cambiar todo este archivo (estructura, estilos, textos).
+     Solo debe quedar la línea  const P = /*__PAQUETE__*/null;  porque ahí se inyectan los datos.
+     Para ver el resultado:  python -m core.web   y abran web/dist/app.html con doble clic.
+     Para mostrarlo en Streamlit: en app.py pongan INTERFAZ = "html". -->
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>App del proyecto</title>
+<style>
+  :root {
+    --fondo: #f6f7f9; --papel: #ffffff; --tinta: #1d2433; --suave: #5b6475; --linea: #e2e5ea;
+    --acento: #2b2e83; --bien: #2e7d32; --medio: #f9a825; --mal: #c62828;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--fondo); color: var(--tinta);
+         font-family: "Segoe UI", system-ui, -apple-system, sans-serif; font-size: 15px; }
+  header { display: flex; gap: 16px; align-items: center; padding: 16px 24px; background: var(--papel);
+           border-bottom: 1px solid var(--linea); }
+  header img { height: 44px; }
+  header h1 { margin: 0; font-size: 22px; }
+  header p { margin: 2px 0 0; color: var(--suave); }
+  nav { display: flex; gap: 8px; padding: 12px 24px; }
+  nav button { border: 1px solid var(--linea); background: var(--papel); padding: 8px 14px; border-radius: 8px;
+               cursor: pointer; font: inherit; }
+  nav button.activa { background: var(--acento); color: #fff; border-color: var(--acento); }
+  main { padding: 0 24px 24px; }
+  .tarjeta { background: var(--papel); border: 1px solid var(--linea); border-radius: 10px; padding: 16px; }
+  .aviso { background: #fff7e0; border: 1px solid #f0d68a; padding: 10px 14px; border-radius: 8px; margin: 12px 24px 0; }
+  input, select { font: inherit; padding: 6px 8px; border: 1px solid var(--linea); border-radius: 6px; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { text-align: left; padding: 8px; border-bottom: 1px solid var(--linea); vertical-align: top; }
+  tbody tr { cursor: pointer; }
+  tbody tr:hover { background: #f0f2f7; }
+  .cifras { display: flex; gap: 16px; flex-wrap: wrap; }
+  .cifra { flex: 1 1 180px; }
+  .cifra b { display: block; font-size: 28px; }
+  .chip { display: inline-block; padding: 2px 10px; border-radius: 999px; color: #fff; font-size: 13px; }
+  footer { color: var(--suave); font-size: 13px; padding: 16px 24px; }
+</style>
+</head>
+<body>
+<header>
+  <img id="logo" alt="">
+  <div><h1 id="producto"></h1><p id="cliente"></p></div>
+</header>
+<nav>
+  <button data-vista="lista" class="activa">Lista</button>
+  <button data-vista="detalle">Detalle</button>
+  <button data-vista="valor">Cuánto vale el modelo</button>
+</nav>
+<main>
+  <section id="lista" class="tarjeta">
+    <p>
+      <input id="buscar" placeholder="Buscar">
+      <select id="filtro"></select>
+      <span id="conteo"></span>
+    </p>
+    <div style="overflow-x:auto"><table><thead id="cabeza"></thead><tbody id="cuerpo"></tbody></table></div>
+  </section>
+  <section id="detalle" class="tarjeta" hidden><p>Elijan una fila en la lista.</p></section>
+  <section id="valor" class="tarjeta" hidden></section>
+</main>
+<footer id="pie"></footer>
+
+<script>
+const P = /*__PAQUETE__*/null;
+const COLORES = ["var(--bien)", "var(--medio)", "var(--mal)", "#6a1b9a"];
+
+function texto(t) { const d = document.createElement("div"); d.textContent = t == null ? "" : String(t); return d.innerHTML; }
+function chip(decision) {
+  const i = P.decision.decisiones.indexOf(decision);
+  return `<span class="chip" style="background:${COLORES[i % COLORES.length]}">${texto(decision)}</span>`;
+}
+function miles(n) { return Number(n).toLocaleString("es-CO", { maximumFractionDigits: 0 }); }
+
+function encabezado() {
+  document.getElementById("producto").textContent = P.app.titulo;
+  document.getElementById("cliente").textContent = P.app.cliente + " · " + P.app.descripcion;
+  if (P.logo) document.getElementById("logo").src = "data:image/png;base64," + P.logo;
+  else document.getElementById("logo").hidden = true;
+  document.getElementById("pie").textContent = P.app.pie || "";
+}
+
+function lista() {
+  const filas = P.resultados;
+  const cuerpo = document.getElementById("cuerpo");
+  if (!filas.length) { cuerpo.innerHTML = "<tr><td>No hay tabla de resultados exportada.</td></tr>"; return; }
+  const columnas = Object.keys(filas[0]).filter(c => c !== "razones");
+  document.getElementById("cabeza").innerHTML =
+    "<tr>" + columnas.map(c => `<th>${texto(P.etiquetas[c] || c)}</th>`).join("") + "</tr>";
+  const filtro = document.getElementById("filtro");
+  filtro.innerHTML = '<option value="">Todas las recomendaciones</option>' +
+    P.decision.decisiones.map(d => `<option>${texto(d)}</option>`).join("");
+  function pintar() {
+    const q = document.getElementById("buscar").value.toLowerCase();
+    const f = filtro.value;
+    const vistas = filas
+      .filter(r => (!f || r.decision === f) && (!q || JSON.stringify(r).toLowerCase().includes(q)))
+      .sort((a, b) => b.probabilidad - a.probabilidad);
+    document.getElementById("conteo").textContent = vistas.length + " filas";
+    cuerpo.innerHTML = vistas.slice(0, 500).map((r, i) =>
+      `<tr data-i="${filas.indexOf(r)}">` + columnas.map(c =>
+        c === "decision" ? `<td>${chip(r[c])}</td>` :
+        c === "probabilidad" ? `<td>${Math.round(r[c] * 100)} %</td>` : `<td>${texto(r[c])}</td>`).join("") + "</tr>").join("");
+  }
+  document.getElementById("buscar").oninput = pintar;
+  filtro.onchange = pintar;
+  cuerpo.onclick = e => { const tr = e.target.closest("tr"); if (tr && tr.dataset.i) { detalle(filas[+tr.dataset.i]); mostrar("detalle"); } };
+  pintar();
+}
+
+function detalle(r) {
+  const id = P.columna_id ? r[P.columna_id] : "";
+  const razones = (r.razones || "").split(" · ").filter(x => x);
+  document.getElementById("detalle").innerHTML = `
+    <h2>${texto(id)}</h2>
+    <div class="cifras">
+      <div class="cifra">Probabilidad de ${texto(P.decision.evento)}<b>${Math.round(r.probabilidad * 100)} %</b></div>
+      <div class="cifra">Recomendación<b>${chip(r.decision)}</b></div>
+    </div>
+    <h3>Razones principales</h3>
+    <ul>${razones.map(x => `<li>${texto(x)}</li>`).join("")}</ul>
+    <p style="color:var(--suave)">Las razones muestran de qué depende la predicción del modelo, no qué pasaría si algo cambiara.</p>`;
+}
+
+function valor() {
+  const m = P.metricas;
+  if (!m || m.costo_modelo == null) { document.getElementById("valor").innerHTML = "<p>Faltan las métricas.</p>"; return; }
+  const ahorro = m.costo_regla - m.costo_modelo;
+  document.getElementById("valor").innerHTML = `
+    <div class="cifras">
+      <div class="cifra">Costo con el modelo<b>${miles(m.costo_modelo)}</b></div>
+      <div class="cifra">Costo con la regla simple<b>${miles(m.costo_regla)}</b></div>
+      <div class="cifra">Ahorro frente a la regla<b>${miles(ahorro)}</b></div>
+    </div>
+    <p>Costos ${texto(m.unidad_costo || "")}, en los datos de prueba.</p>
+    <p><b>Regla simple:</b> ${texto(m.regla_simple || "")}</p>
+    ${m.intervalo_diferencia ? `<p>Intervalo de 95 % del ahorro: de ${miles(m.intervalo_diferencia[0])} a ${miles(m.intervalo_diferencia[1])}</p>` : ""}`;
+}
+
+function mostrar(vista) {
+  for (const s of document.querySelectorAll("main section")) s.hidden = s.id !== vista;
+  for (const b of document.querySelectorAll("nav button")) b.classList.toggle("activa", b.dataset.vista === vista);
+}
+document.querySelector("nav").onclick = e => { if (e.target.dataset.vista) mostrar(e.target.dataset.vista); };
+
+if (P) { encabezado(); lista(); valor(); }
+else { document.body.innerHTML = "<p style='padding:24px'>Abran web/dist/app.html (se crea con: python -m core.web).</p>"; }
+</script>
+</body>
+</html>

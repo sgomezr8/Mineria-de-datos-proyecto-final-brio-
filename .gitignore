@@ -1,0 +1,7 @@
+datos/
+*.zip
+__pycache__/
+.venv/
+venv/
+.ipynb_checkpoints/
+web/dist/
