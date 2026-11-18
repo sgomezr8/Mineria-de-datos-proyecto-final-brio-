@@ -173,10 +173,6 @@ def vista_competencia():
     quejas = c[["quejas_pct_" + t for t in temas]].copy() * 100
     quejas.columns = resenas.columns
 
-    st.markdown("**Índice de desafecto digital (2026):** reseñas graves estimadas por cada 1.000 reseñas de "
-                "la app. Meta propuesta para Brío: menos de 50, el nivel de Nequi.")
-    st.bar_chart(c["indice_desafecto"].sort_values(ascending=False), horizontal=True)
-
     por = st.radio("Ver por", ["Tipo de app", "App"], horizontal=True)
     if por == "Tipo de app":
         st.markdown("**% de las reseñas negativas que toca cada tema**")
